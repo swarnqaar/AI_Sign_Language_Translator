@@ -1,42 +1,10 @@
-# Core Deep Learning
-tensorflow==2.16.1
-keras==3.3.3
-
-# Computer Vision
-opencv-python==4.10.0.84
-mediapipe==0.10.14
-
-# Numerical Computing
-numpy==1.26.4
-pandas==2.2.2
-
-# Visualization
-matplotlib==3.9.0
-
-# Machine Learning Utilities
-scikit-learn==1.5.0
-
-# API Backend
-fastapi==0.111.0
-uvicorn==0.30.1
-
-# Frontend
-streamlit==1.35.0
-
-# Speech/Text-to-Speech
-pyttsx3==2.90
-gTTS==2.5.1
-
-# Image Processing
-Pillow==10.3.0
-
-# File Handling
-python-multipart==0.0.9
-
-# Optional Utilities
-tqdm==4.66.4
-joblib==1.4.2
-
-# Jupyter Notebook (Optional)
-jupyter==1.0.0
-ipykernel==6.29.4
+tensorflow
+opencv-python
+mediapipe
+numpy
+streamlit
+fastapi
+uvicorn
+scikit-learn
+pillow
+gtts
