@@ -8,3 +8,5 @@ uvicorn
 scikit-learn
 pillow
 gtts
+
+-e .
