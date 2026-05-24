@@ -363,10 +363,10 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 ## 📬 Contact
 
-**Author:** Your Name  
-**Email:** your.email@example.com  
-**LinkedIn:** [linkedin.com/in/yourprofile](https://linkedin.com/in/yourprofile)  
-**GitHub:** [github.com/your-username](https://github.com/your-username)
+**Author:** Shubham Kumar
+**Email:** shubamkumar3039@gmail.com  
+**LinkedIn:** [linkedin.com/in/swarnqaar](https://linkedin.com/in/swarnqaar)  
+**GitHub:** [github.com/swarnqaar](https://github.com/swarnqaar)
 
 ---
 
