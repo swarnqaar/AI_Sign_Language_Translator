@@ -365,7 +365,7 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 **Author:** Shubham Kumar
 **Email:** shubamkumar3039@gmail.com  
-**LinkedIn:** [linkedin.com/in/swarnqaar](https://linkedin.com/in/swarnqaar)  
+**LinkedIn:** [linkedin.com/in/shubham-kumar-02ab4a28a/](https://linkedin.com/in/shubham-kumar-02ab4a28a/)  
 **GitHub:** [github.com/swarnqaar](https://github.com/swarnqaar)
 
 ---
