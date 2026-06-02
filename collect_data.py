@@ -15,9 +15,10 @@ print(f"MediaPipe version: {mp.__version__}")
 print(f"OpenCV version   : {cv2.__version__}")
 
 # ── Config ───────────────────────────────────────────────────────────────────
-OUTPUT_CSV    = os.path.join("Sign_Data", "sign_language_data.csv")
-NUM_LANDMARKS = 21
-COORDS        = ["x", "y", "z"]
+OUTPUT_DIR     = "sign_data"
+OUTPUT_CSV     = os.path.join(OUTPUT_DIR, "sign_language_data.csv")
+NUM_LANDMARKS  = 21
+COORDS         = ["x", "y", "z"]
 
 ALL_GESTURES = [
     "A","B","C","D","E","F","G","H","I","J",
@@ -225,7 +226,7 @@ def collect_gesture(gesture, num_samples, camera_idx=0):
     print(f"  Target  : {num_samples}  Have: {existing}  Need: {remaining}")
     print(f"{'='*50}")
 
-    os.makedirs("Sign_Data", exist_ok=True)
+    os.makedirs(OUTPUT_DIR, exist_ok=True)
 
     cap = open_camera(camera_idx)
     if cap is None:
@@ -263,7 +264,7 @@ def collect_gesture(gesture, num_samples, camera_idx=0):
             mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=rgb)
             result   = landmarker.detect(mp_image)
 
-            hand_found = len(result.hand_landmarks) > 0
+            hand_found = bool(result.hand_landmarks)
 
             # Draw skeleton
             frame = draw_skeleton(frame, result)
