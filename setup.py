@@ -23,10 +23,11 @@ def get_requirements()->List[str]:
     return requirement_lst
 
 setup(
-    name="AI_sign_language_translator",
+    name="AI_Sign_Language_Translator",
     version="0.0.1",
     author="Shubham Kumar",
     author_email="shubamkumar3039@gmail.com",
     packages=find_packages(),
     install_requires=get_requirements()
 )
+
