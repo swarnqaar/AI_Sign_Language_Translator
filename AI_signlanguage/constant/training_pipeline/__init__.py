@@ -49,6 +49,15 @@ DATA_TRANSFORMATION_TEST_FILE_PATH: str = "test.npy"
 
 
 
+# Model Trainer
+MODEL_TRAINER_DIR_NAME: str = "model_trainer"
+MODEL_TRAINER_TRAINED_MODEL_DIR: str = "trained_model"
+MODEL_TRAINER_TRAINED_MODEL_NAME: str = "model.pkl"
+MODEL_TRAINER_EXPECTED_SCORE: float = 0.75
+MODEL_TRAINER_OVER_FITTING_UNDER_FITTING_THRESHOLD: float = 0.05
+
+TRAINING_BUCKET_NAME = "signlanguage-translator"
+
 
 # Sign language gesture class labels (ASL A-Z + common phrases)
 SIGN_CLASSES = [
