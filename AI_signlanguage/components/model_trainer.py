@@ -28,7 +28,7 @@ from AI_signlanguage.logging.logger import logging
 
 from AI_signlanguage.entity.artifact_entity import ModelTrainerArtifact
 from AI_signlanguage.entity.artifact_entity import (
-    DataTransformationArtifact,z
+    DataTransformationArtifact,
     ModelTrainerArtifact,
 )
 from AI_signlanguage.entity.artifact_entity import ModelTrainerArtifact
@@ -55,17 +55,7 @@ from sklearn.ensemble import (
     GradientBoostingClassifier,
     AdaBoostClassifier,
 )
-import mlflow
-from urllib.parse import urlparse
 
-# ------------------------------------------------------------------
-# MLflow / DagsHub tracking — replace with your own credentials
-# ------------------------------------------------------------------
-os.environ["MLFLOW_TRACKING_URI"] = (
-    "https://dagshub.com/your_username/signlanguage_translator.mlflow"
-)
-os.environ["MLFLOW_TRACKING_USERNAME"] = "your_username"
-os.environ["MLFLOW_TRACKING_PASSWORD"] = "your_dagshub_token"
 
 
 class ModelTrainer:
@@ -80,26 +70,8 @@ class ModelTrainer:
         except Exception as e:
             raise SignLanguageException(e, sys)
 
-    # ------------------------------------------------------------------
-    # MLflow experiment tracking
-    # ------------------------------------------------------------------
-    def track_mlflow(self, best_model, classification_metric):
-        """Log model + metrics to the configured MLflow tracking server."""
-        mlflow.set_registry_uri(os.environ["MLFLOW_TRACKING_URI"])
-        tracking_url_type_store = urlparse(mlflow.get_tracking_uri()).scheme
-        with mlflow.start_run():
-            mlflow.log_metric("f1_score", classification_metric.f1_score)
-            mlflow.log_metric("precision", classification_metric.precision_score)
-            mlflow.log_metric("recall_score", classification_metric.recall_score)
-            mlflow.log_metric("accuracy", classification_metric.accuracy)
-            mlflow.sklearn.log_model(best_model, "model")
+   
 
-            if tracking_url_type_store != "file":
-                mlflow.sklearn.log_model(
-                    best_model,
-                    "model",
-                    registered_model_name=type(best_model).__name__,
-                )
 
     # ------------------------------------------------------------------
     # Core training loop
