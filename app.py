@@ -20,7 +20,7 @@ ca = certifi.where()
 from dotenv import load_dotenv
 load_dotenv()
 
-mongo_db_url = os.getenv("MONGODB_URL_KEY", "")
+mongo_db_url = os.getenv("MONGO_DB_URL")
 
 import pymongo
 from AI_signlanguage.exception.exception import SignLanguageException
