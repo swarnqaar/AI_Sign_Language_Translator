@@ -56,8 +56,6 @@ from sklearn.ensemble import (
     AdaBoostClassifier,
 )
 
-
-
 class ModelTrainer:
     def __init__(
         self,
