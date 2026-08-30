@@ -6,6 +6,10 @@ Usage:
     python train_deep.py --model transformer  # use transformer architecture
     python train_deep.py --epochs 50 --batch 64
 """
+import os
+os.environ["TF_CPP_MIN_LOG_LEVEL"]  = "3"
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+os.environ["GLOG_minloglevel"]       = "3"
 
 import argparse
 from AI_signlanguage.components.deep_learning.deep_model_trainer import train_deep_model
