@@ -152,7 +152,7 @@ async def live_predict(request: Request):
         return JSONResponse({"gesture": gesture})
     except Exception as e:
         raise SignLanguageException(e, sys)
-
+# exception handling for the entire app
 
 if __name__ == "__main__":
     app_run(app, host="0.0.0.0", port=8000)
