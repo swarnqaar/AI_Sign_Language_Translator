@@ -12,7 +12,7 @@
 
 ---
 
-## 📌 Entire Project Overview
+## 📌 Entire Project Overview and description 
 
 This project uses **Computer Vision**, **Deep Learning**, and **Natural Language Processing** to translate American Sign Language (ASL) hand gestures into readable text and audible speech — in real time.
 
