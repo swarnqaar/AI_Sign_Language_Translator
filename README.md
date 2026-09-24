@@ -23,7 +23,8 @@ The system is designed to:
 
 ---
 
-## 🚀 Features
+## 🚀 Features of this project
+
 
 | Feature | Status |
 |---|---|
