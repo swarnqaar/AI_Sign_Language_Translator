@@ -1,3 +1,4 @@
+
 """
 app.py  –  FastAPI Application
 ================================
@@ -42,7 +43,14 @@ from AI_signlanguage.constant.training_pipeline import (
 )
 
 # MongoDB client
-client = pymongo.MongoClient(mongo_db_url, tlsCAFile=ca)
+try:
+    client = pymongo.MongoClient(mongo_db_url, tlsCAFile=ca, serverSelectionTimeoutMS=8000)
+    client.server_info()  # test connection
+    print("MongoDB connected OK")
+except Exception as e:
+    print(f"MongoDB not connected: {e}")
+    client = None
+
 database = client[DATA_INGESTION_DATABASE_NAME]
 collection = database[DATA_INGESTION_COLLECTION_NAME]
 
@@ -155,4 +163,4 @@ async def live_predict(request: Request):
 # exception handling for the entire app
 
 if __name__ == "__main__":
-    app_run(app, host="0.0.0.0", port=8000)
+    app_run(app, host="127.0.0.1", port=8000)
