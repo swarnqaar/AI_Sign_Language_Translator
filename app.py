@@ -126,6 +126,64 @@ async def predict_route(request: Request, file: UploadFile = File(...)):
         raise SignLanguageException(e, sys)
 
 
+from pydantic import BaseModel
+from typing import List
+
+class LandmarkInput(BaseModel):
+    landmarks: List[float]
+
+@app.post("/live", tags=["Inference"])
+async def live_predict(data: LandmarkInput):
+    """
+    Send 126 landmark float values and get back a gesture label.
+    
+    Example body:
+    {
+        "landmarks": [0.12, 0.45, 0.03, ...]
+    }
+    """
+    try:
+        landmarks = data.landmarks
+
+        if len(landmarks) != 126:
+            return JSONResponse(
+                {"error": f"Expected 126 values, got {len(landmarks)}"},
+                status_code=400,
+            )
+
+        # Check model files exist
+        preprocessor_path  = "final_model/preprocessor.pkl"
+        model_path         = "final_model/model.pkl"
+        label_encoder_path = "final_model/label_encoder.pkl"
+
+        if not os.path.exists(model_path):
+            return JSONResponse(
+                {"error": "Model not found. Train the model first."},
+                status_code=404,
+            )
+
+        preprocessor  = load_object(preprocessor_path)
+        final_model   = load_object(model_path)
+        label_encoder = load_object(label_encoder_path)
+
+        sign_model     = SignLanguageModel(preprocessor=preprocessor, model=final_model)
+        feature_vector = np.array(landmarks).reshape(1, -1)
+        y_pred_encoded = sign_model.model.predict(
+            preprocessor.transform(feature_vector)
+        )
+        gesture = label_encoder.inverse_transform(
+            y_pred_encoded.astype(int)
+        )[0]
+
+        return JSONResponse({"gesture": gesture, "status": "success"})
+
+    except Exception as e:
+        return JSONResponse(
+            {"error": str(e)},
+            status_code=500,
+        )
+
+'''
 @app.post("/live", tags=["Inference"])
 async def live_predict(request: Request):
     """
@@ -161,6 +219,8 @@ async def live_predict(request: Request):
     except Exception as e:
         raise SignLanguageException(e, sys)
 # exception handling for the entire app
+
+'''
 
 if __name__ == "__main__":
     app_run(app, host="127.0.0.1", port=8000)
