@@ -43,7 +43,7 @@ class DataValidation:
     @staticmethod
     def read_data(file_path) -> pd.DataFrame:
         try:
-            return pd.read_csv(file_path)
+            return pd.read_csv(file_path, low_memory=False)
         except Exception as e:
             raise SignLanguageException(e, sys)
 
