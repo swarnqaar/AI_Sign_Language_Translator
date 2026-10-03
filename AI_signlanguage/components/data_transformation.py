@@ -58,7 +58,19 @@ class DataTransformation:
     @staticmethod
     def read_data(file_path) -> pd.DataFrame:
         try:
-            return pd.read_csv(file_path, low_memory=False)
+            df = pd.read_csv(file_path, low_memory=False)
+
+            # Fix dirty data — replace all string NaN variants with real NaN
+            dirty_values = ["nan", "NaN", "Nan", "Knan", "knan", "NULL",
+                            "null", "None", "none", "NA", "na", "N/A", ""]
+            df.replace(dirty_values, np.nan, inplace=True)
+
+            # Force all feature columns (except label) to numeric
+            for col in df.columns:
+                if col != "label":
+                    df[col] = pd.to_numeric(df[col], errors="coerce")
+
+            return df
         except Exception as e:
             raise SignLanguageException(e, sys)
 

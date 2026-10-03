@@ -23,6 +23,7 @@ from AI_signlanguage.utils.main_utils.utils import read_yaml_file, write_yaml_fi
 
 from scipy.stats import ks_2samp
 import pandas as pd
+import numpy as np
 import os
 import sys
 
@@ -43,10 +44,19 @@ class DataValidation:
     @staticmethod
     def read_data(file_path) -> pd.DataFrame:
         try:
-            return pd.read_csv(file_path, low_memory=False)
+            df = pd.read_csv(file_path, low_memory=False)
+
+            dirty_values = ["nan", "NaN", "Nan", "Knan", "knan", "NULL",
+                            "null", "None", "none", "NA", "na", "N/A", ""]
+            df.replace(dirty_values, np.nan, inplace=True)
+
+            for col in df.columns:
+                if col != "label":
+                    df[col] = pd.to_numeric(df[col], errors="coerce")
+
+            return df
         except Exception as e:
             raise SignLanguageException(e, sys)
-
     # ------------------------------------------------------------------
     # Validation 1 – column count
     # ------------------------------------------------------------------
