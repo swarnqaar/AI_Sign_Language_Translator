@@ -26,22 +26,65 @@ class DataIngestion:
         except Exception as e:
             raise SignLanguageException(e,sys)
         
-    def export_collection_as_dataframe(self):
-        """
-        Read data from mongodb
-        """
+    def export_collection_as_dataframe(self) -> pd.DataFrame:
         try:
-            database_name=self.data_ingestion_config.database_name
-            collection_name=self.data_ingestion_config.collection_name
-            self.mongo_client=pymongo.MongoClient(MONGO_DB_URL)
-            collection=self.mongo_client[database_name][collection_name]
+            # ── Try MongoDB first ──────────────────────────────────────────
+            try:
+                import certifi
+                ca = certifi.where()
+                self.mongo_client = pymongo.MongoClient(
+                    MONGO_DB_URL,
+                    tlsCAFile=ca,
+                    serverSelectionTimeoutMS=5000,  # 5 second timeout
+                )
+                self.mongo_client.server_info()  # test connection
 
-            df=pd.DataFrame(list(collection.find()))
-            if "_id" in df.columns.to_list():
-                df=df.drop(columns=["_id"])
-            
-            df.replace({"na":np.nan},inplace=True)
-            return df
+                database_name   = self.data_ingestion_config.database_name
+                collection_name = self.data_ingestion_config.collection_name
+                collection      = self.mongo_client[database_name][collection_name]
+
+                df = pd.DataFrame(list(collection.find()))
+                if "_id" in df.columns:
+                    df = df.drop(columns=["_id"])
+                df.replace({"na": np.nan}, inplace=True)
+
+                logging.info(f"Loaded {len(df)} rows from MongoDB")
+                return df
+
+            except Exception as mongo_error:
+                logging.warning(f"MongoDB failed: {mongo_error}")
+                logging.info("Falling back to local CSV file...")
+
+            # ── Fallback: load from local CSV ─────────────────────────────
+            local_csv_paths = [
+                "Sign_Data/sign_language_data.csv",
+                os.path.join("Sign_Data", "sign_language_data.csv"),
+            ]
+
+            for csv_path in local_csv_paths:
+                if os.path.exists(csv_path):
+                    df = pd.read_csv(csv_path, low_memory=False)
+
+                    # Clean dirty values
+                    dirty = ["nan","NaN","Nan","Knan","knan","NULL",
+                            "null","None","none","NA","na","N/A",""]
+                    df.replace(dirty, np.nan, inplace=True)
+
+                    # Force numeric columns
+                    for col in df.columns:
+                        if col != "label":
+                            df[col] = pd.to_numeric(df[col], errors="coerce")
+
+                    logging.info(f"Loaded {len(df)} rows from local CSV: {csv_path}")
+                    print(f"Loaded data from local CSV: {csv_path} ({len(df)} rows)")
+                    return df
+
+            # ── No data found ─────────────────────────────────────────────
+            raise FileNotFoundError(
+                "No data found! Neither MongoDB nor local CSV available.\n"
+                "Please run: python collect_data.py --gesture A --samples 300"
+            )
+
         except Exception as e:
             raise SignLanguageException(e, sys)
         

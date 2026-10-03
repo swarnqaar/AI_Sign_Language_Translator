@@ -86,8 +86,10 @@ class ModelTrainer:
             "SVC": SVC(probability=True),
             "KNN": KNeighborsClassifier(n_jobs=-1),
             "Logistic Regression": LogisticRegression(
-                max_iter=1000, multi_class="auto", n_jobs=-1
-            ),
+                max_iter=1000, n_jobs=-1
+                ),
+            
+    
         }
 
         params = {
