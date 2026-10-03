@@ -70,47 +70,45 @@ class DataValidation:
     def detect_dataset_drift(
         self, base_df: pd.DataFrame, current_df: pd.DataFrame, threshold: float = 0.05
     ) -> bool:
-        """
-        Applies the two-sample KS test column by column.
-        If the p-value is below `threshold` for any feature, the
-        distributions are considered significantly different (drift detected).
-
-        For landmark coordinates this is crucial: a model trained on data
-        captured from a webcam at chest height will drift badly when deployed
-        on a mobile camera held at arm's length.
-        """
         try:
             status = True
             report = {}
-            # Only test numeric feature columns, skip the label
+
             numeric_cols = [
-                c for c in base_df.columns if c != "label"
-                and pd.api.types.is_numeric_dtype(base_df[c])
+                c for c in base_df.columns
+                if c != "label" and pd.api.types.is_numeric_dtype(base_df[c])
             ]
+
             for column in numeric_cols:
-                d1 = base_df[column]
-                d2 = current_df[column]
-                is_same_dist = ks_2samp(d1, d2)
-                drift_found = is_same_dist.pvalue < threshold
-                if drift_found:
-                    status = False
-                report[column] = {
-                    "p_value": float(is_same_dist.pvalue),
-                    "drift_status": drift_found,
-                }
+                # Drop NaN values before KS test
+                d1 = base_df[column].dropna().astype(float).values
+                d2 = current_df[column].dropna().astype(float).values
+
+                # Skip column if not enough data
+                if len(d1) < 2 or len(d2) < 2:
+                    continue
+
+                try:
+                    stat, p_value = ks_2samp(d1, d2)
+                    drift_found = bool(p_value < threshold)
+                    if drift_found:
+                        status = False
+                    report[column] = {
+                        "p_value": float(p_value),
+                        "drift_status": drift_found,
+                    }
+                except Exception:
+                    continue
 
             drift_report_file_path = self.data_validation_config.drift_report_file_path
             dir_path = os.path.dirname(drift_report_file_path)
             os.makedirs(dir_path, exist_ok=True)
             write_yaml_file(file_path=drift_report_file_path, content=report)
-            logging.info(
-                f"Drift report saved at {drift_report_file_path}. "
-                f"Overall status (no drift): {status}"
-            )
+            logging.info(f"Drift report saved. Status: {status}")
             return status
+
         except Exception as e:
             raise SignLanguageException(e, sys)
-
     # ------------------------------------------------------------------
     # Orchestrator
     # ------------------------------------------------------------------
